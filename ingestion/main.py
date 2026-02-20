@@ -6,6 +6,7 @@ from helpers.chunking import generate_chunks_for_files
 from helpers.open_ai import add_embeddings_to_chunks
 from helpers.common import get_unique_source_urls
 from helpers.search import fetch_keys_for_existing_source_urls, delete_keys_in_batches, upload_chunks_in_batches
+from helpers.search import delete_all_chunks_from_index
 
 app = FastAPI()
 
@@ -38,3 +39,8 @@ async def ingest():
     print(ingestion_response)
     
     return ingestion_response
+
+@app.post("/clear-index")
+async def clear_index():
+    response = delete_all_chunks_from_index()
+    return response

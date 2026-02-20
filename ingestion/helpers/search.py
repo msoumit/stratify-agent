@@ -63,3 +63,31 @@ def upload_chunks_in_batches(chunks: List[Dict[str, Any]]):
             raise RuntimeError(f"Upload failed for {len(failed)} chunks. First error: {failed[0].error_message}")
 
         return f"Uploaded {len(batch)} chunks (total {min(i+int(SEARCH_BATCH_SIZE), len(chunks))}/{len(chunks)})"
+    
+def delete_all_chunks_from_index(page_size: int = 1000):
+    results = search_client.search(
+        search_text="*",
+        select=KEY_FIELD,
+    )
+
+    total_deleted = 0
+    batch = []
+
+    for page in results.by_page():
+        for doc in page:
+            batch.append({KEY_FIELD: doc[KEY_FIELD]})
+
+            if len(batch) >= page_size:
+                search_client.delete_documents(documents=batch)
+                total_deleted += len(batch)
+                batch.clear()
+
+    # delete remaining
+    if batch:
+        search_client.delete_documents(documents=batch)
+        total_deleted += len(batch)
+
+    return {
+        "status": "completed",
+        "documents_deleted": total_deleted,
+    }
