@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 from openai import AzureOpenAI
 import json
-from helpers.prompts import SYSTEM_PROMPT
+from helpers.prompts import TECH_SYSTEM_PROMPT, FINANCE_SYSTEM_PROMPT
 from helpers.common import build_validation_prompt, compute_confidence_from_claims, compute_verdict, build_final_response
 
 load_dotenv()
@@ -25,7 +25,15 @@ def embed_query(text: str) -> list[float]:
     )
     return response.data[0].embedding
 
-def generate_llm_response(context: str, prompt: str):
+def generate_llm_response(context: str, prompt: str, prompt_type: str):
+
+    SYSTEM_PROMPT = ""
+    
+    if prompt_type == "technology":
+        SYSTEM_PROMPT = TECH_SYSTEM_PROMPT
+    else:
+        SYSTEM_PROMPT = FINANCE_SYSTEM_PROMPT
+    
     response = oai_client.chat.completions.create(
         model=OAI_MODEL_DEPLOYMENT,
         messages=[
