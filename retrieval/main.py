@@ -23,10 +23,10 @@ async def get_response(request: Request):
     # currently testing from Postman is being difficult with huge tech prompt.
     # that's why loading tech and finance user prompt from prompts.py file.
     # later, these prompts will come from copilot studio agent.
-    if prompt_type == "technology":
-        prompt = TECH_USER_PROMPT
-    else:
-        prompt = FINANCE_USER_PROMPT
+    # if prompt_type == "technology":
+    #     prompt = TECH_USER_PROMPT
+    # else:
+    #     prompt = FINANCE_USER_PROMPT
 
     print("Performing hybrid search against search index....")
     hits = hybrid_semantic_vector_search(prompt, k=5)
