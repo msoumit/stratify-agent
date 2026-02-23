@@ -7,8 +7,16 @@ from helpers.open_ai import add_embeddings_to_chunks
 from helpers.common import get_unique_source_urls
 from helpers.search import fetch_keys_for_existing_source_urls, delete_keys_in_batches, upload_chunks_in_batches
 from helpers.search import delete_all_chunks_from_index
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def index():
