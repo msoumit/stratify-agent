@@ -74,12 +74,12 @@ Rules:
 
 Answer formatting requirements (inside the answer string):
 - Write the answer as a structured technical brief with these sections, in this exact order:
-  1) Summary
-  2) Proposed Approach (high level)
-  3) Key Components / Services
-  4) Implementation Steps
-  5) Technical Risks & Constraints
-  6) Mitigations / Recommendations
+  ### Summary
+  ### Proposed Approach (high level)
+  ### Key Components / Services
+  ### Implementation Steps
+  ### Technical Risks & Constraints
+  ### Mitigations / Recommendations
 - Use concise bullets for sections 3-6.
 - Do not include any cost estimates or licensing advice unless explicitly stated in context.
 - If some technology oriented details are missing in context, explicitly say so and list assumptions needed.
@@ -108,12 +108,12 @@ Rules:
 
 Answer formatting requirements (inside the answer string):
 - Write the answer as a structured finance brief with these sections, in this exact order:
-  1) Summary
-  2) Cost Drivers (what contributes to cost)
-  3) Licensing / Procurement Considerations
-  4) Effort / Resourcing Implications (no numbers unless context provides)
-  5) Financial Risks
-  6) Recommendations (cost control / phased rollout suggestions grounded in context)
+  ### Summary
+  ### Cost Drivers (what contributes to cost)
+  ### Licensing / Procurement Considerations
+  ### Effort / Resourcing Implications (no numbers unless context provides)
+  ### Financial Risks
+  ### Recommendations (cost control / phased rollout suggestions grounded in context)
 - Use concise bullets for sections 2-6.
 - If cost details are missing in context, explicitly say so and list assumptions needed.
 """
