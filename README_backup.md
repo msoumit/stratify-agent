@@ -1,8 +1,8 @@
-# stratify-agent
+# Stratify AI Agent
 
-Strategic reasoning agent for Microsoft Agent League Hackathon.
+Stratify AI is a project-requirement analysis assistant. It helps teams strategically evaluate solution options from two critical dimensions at the same time: technical feasibility and financial impact.
 
-This repository contains the backend services used by a Copilot Studio orchestrator agent. The Copilot package is now included in this repo and can be imported by evaluators to test the full flow locally.
+Given a user query, the Copilot Studio orchestrator decomposes it into technology and finance prompts, calls backend RAG APIs, runs a reasoning-based guardrail validation to verify grounding, and presents a consolidated recommendation with citations. This repository includes the FastAPI ingestion/retrieval services and the exported Copilot solution package so the full workflow can be run locally end-to-end.
 
 ## Solution overview
 
@@ -21,7 +21,7 @@ High-level flow:
 4. Each flow sends `POST` request to local retrieval API endpoint (through ngrok).
 5. Backend performs hybrid retrieval (vector + semantic) on Azure AI Search.
 6. Retrieved chunks are passed to Azure OpenAI for grounded answer generation.
-7. Guardrail validation checks claims against context.
+7. A reasoning-based guardrail validator breaks answers into claims and checks each claim against retrieved context.
 8. Backend response is returned to Copilot, parsed, and displayed in adaptive card sections for technology and finance.
 
 ## Repository structure
@@ -31,7 +31,7 @@ High-level flow:
 - `demo-files/`: Sample documents for testing ingestion.
 - `copilot-export/StratifyAgent_1_0_0_1_managed.zip`: Exported Copilot Studio managed solution package.
 
-## Copilot package details (verified from export)
+## Copilot package details
 
 - Solution unique name: `StratifyAgent`
 - Solution display name: `Stratify AI`
@@ -39,15 +39,13 @@ High-level flow:
 - Package type: `Managed`
 - Copilot name: `Stratify AI`
 - Main topic (display name): `Data Orchestrator`
-- Main topic schema name: `copilots_header_97e76.topic.AgentLeagueTopic`
 - Identity topic (display name): `Agent Identification`
-- Identity topic schema name: `copilots_header_97e76.topic.AgentIdentification`
 - AI Builder model used for prompt decomposition: `Orch_Two_domain_prompts`
 - Flow IDs used by topic:
   - Finance flow: `4100834b-0c13-f111-8341-7ced8daf54b2`
   - Tech flow: `95bffa7c-470f-f111-8341-7ced8daf0540`
 - Environment variables expected by both flows:
-  - `sai_var_ngrok_api_base_url` (example value from export was an ngrok URL)
+  - `sai_var_ngrok_api_base_url` (example value of an ngrok URL)
   - `sai_var_ngrok_api_method_name` (default `/get-response`)
 
 ## Prerequisites
@@ -68,6 +66,13 @@ Create resources in one Azure subscription/resource group:
 - Azure Storage Account
   - One Blob container for source files
 
+## Step 0: Clone the repository
+
+```powershell
+git clone <your-repo-url>
+cd stratify-agent
+```
+
 ## Step 1: Prepare Azure resources
 
 ### 1.1 Azure Storage
@@ -86,7 +91,7 @@ Supported file types by current ingestion code:
 Important:
 - Ingestion API can create the index schema via `POST /create-index`.
 - Schema uses vector `embedding` dimension `1536`.
-- Your embedding deployment must output 1536-dimensional vectors.
+- Your embedding deployment must output 1536-dimensional vectors (example: `text-embedding-3-small`).
 
 ### 1.3 Azure OpenAI
 1. Create Azure OpenAI resource.
@@ -330,10 +335,3 @@ After updating variables and confirming flows, publish the Copilot agent.
   - `citations`
   - `guardrail`
 - Avoid non-JSON wrappers in backend response.
-
-## Current status
-
-- FastAPI ingestion service: implemented
-- FastAPI retrieval + guardrail service: implemented
-- Copilot Studio export package: included (`StratifyAgent_1_0_0_1_managed.zip`)
-- This README: end-to-end local setup and validation guide
