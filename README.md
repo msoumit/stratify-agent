@@ -27,9 +27,9 @@ To be written later
 
 # Agent process flow architecture
 
-![alt text](stratify-agent\Images\Tech Diagram.png)
+![Tech Diagram](STRATIFY-AGENT/Images/Tech Diagram.png)
 
-![alt text](stratify-agent\Images\Mermaid.png)
+![Memaid Diagram](stratify-agent\Images\Mermaid.png)
 
 End user asks question about project requirement in Copilot Studio
 Copilot Studio Orchestrator agent splits the query into two prompts - technology oriented and finance oriented
