@@ -14,11 +14,11 @@ The solution provides project requirement analysis through two perspectives:
 
 **End-to-end architecture (flow view)**
 
-![Stratify Architecture Flow](https://github.com/msoumit/stratify-agent/blob/main/Images/architecture-flow.png)
+![Stratify Architecture Flow](https://github.com/msoumit/stratify-agent/blob/main/images/architecture-flow.png)
 
 **Execution sequence (interaction view)**
 
-![Stratify Sequence Diagram](https://github.com/msoumit/stratify-agent/blob/main/Images/sequence-diagram.png)
+![Stratify Sequence Diagram](https://github.com/msoumit/stratify-agent/blob/main/images/sequence-diagram.png)
 
 High-level flow:
 1. End user asks a project requirement question in Copilot Studio.
