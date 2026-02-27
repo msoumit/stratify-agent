@@ -29,7 +29,7 @@ To be written later
 
 ![Tech Diagram](https://github.com/msoumit/stratify-agent/blob/main/Images/Mermaid.png)
 
-![Memaid Diagram](stratify-agent\Images\Mermaid.png)
+![Memaid Diagram](https://github.com/msoumit/stratify-agent/blob/main/Images/Tech%20Diagram.png)
 
 End user asks question about project requirement in Copilot Studio
 Copilot Studio Orchestrator agent splits the query into two prompts - technology oriented and finance oriented
