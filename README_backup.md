@@ -1,4 +1,4 @@
-# Stratify AI Agent
+﻿# Stratify AI Agent
 
 Stratify AI is a project-requirement analysis assistant. It helps teams strategically evaluate solution options from two critical dimensions at the same time: technical feasibility and financial impact.
 
@@ -9,6 +9,16 @@ Given a user query, the Copilot Studio orchestrator decomposes it into technolog
 The solution provides project requirement analysis through two perspectives:
 - Technology analysis
 - Financial analysis
+
+### Architecture diagrams
+
+**End-to-end architecture (flow view)**
+
+![Stratify Architecture Flow](https://github.com/msoumit/stratify-agent/blob/main/Images/architecture-flow.png)
+
+**Execution sequence (interaction view)**
+
+![Stratify Sequence Diagram](https://github.com/msoumit/stratify-agent/blob/main/Images/sequence-diagram.png)
 
 High-level flow:
 1. End user asks a project requirement question in Copilot Studio.
@@ -335,3 +345,7 @@ After updating variables and confirming flows, publish the Copilot agent.
   - `citations`
   - `guardrail`
 - Avoid non-JSON wrappers in backend response.
+
+
+
+
