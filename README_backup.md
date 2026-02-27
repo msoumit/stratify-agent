@@ -319,6 +319,22 @@ After updating variables and confirming flows, publish the Copilot agent.
    - Guardrail verdict and confidence for both
    - Source links from citations
 
+## Sample evaluation questions (for `demo-files/`)
+
+If you ingest the sample documents from `demo-files/`, use these prompts to validate end-to-end behavior in Copilot.
+
+1. **SaaS vs custom build**
+
+   Tell me from technical standpoint should we go for SaaS Product available in 3rd Party vendor or build in house custom tool? Please consider financial aspect for both cases and suggest which option is better in both technical feasibility, governance and time to build vs cost.
+
+2. **Data center refresh vs cloud migration (5-year)**
+
+   We have a hardware refresh coming up within the next year and our current data center hosts around 220 VMs with 40 TB of data. From a long-term strategic perspective, should we modernize our on-prem infrastructure or migrate to cloud? I am particularly concerned about 5-year horizon to check which option will be better in terms of technical feasibility, financial aspect and governance.
+
+3. **Managed AI platform vs self-hosted AI infra (5-year)**
+
+   We are planning to scale AI use cases across the organization, including intelligent search, copilots, and document automation, with projected usage of around 5 million API calls per month. From a 5-year strategic perspective, should we rely on a managed AI platform like Azure OpenAI, or invest in building our own self-hosted AI infrastructure with dedicated GPU clusters?
+
 ## Troubleshooting
 
 ### Copilot returns no response
