@@ -2,7 +2,7 @@
 
 Strategic reasoning agent for Microsoft Agent League Hackathon.
 
-This repository contains the backend services used by a Copilot Studio orchestrator agent. The Copilot asset will be exported and added to this repo separately. This README is designed so evaluators can set up all required Azure resources, run the FastAPI services locally, import the Copilot Studio agent, and test the full end-to-end flow.
+This repository contains the backend services used by a Copilot Studio orchestrator agent. The Copilot package is now included in this repo and can be imported by evaluators to test the full flow locally.
 
 ## Solution overview
 
@@ -12,19 +12,43 @@ The solution provides project requirement analysis through two perspectives:
 
 High-level flow:
 1. End user asks a project requirement question in Copilot Studio.
-2. Copilot Studio orchestrator splits the request into two tracks: technology and finance.
-3. Copilot calls backend FastAPI endpoint for both tracks.
-4. Backend performs hybrid retrieval (vector + semantic) on Azure AI Search.
-5. Retrieved chunks are passed to Azure OpenAI for grounded answer generation.
-6. A guardrail validation pass checks answer claims against retrieved context.
-7. Backend returns structured JSON containing answer, citations, verdict, confidence, and issues.
-8. Copilot combines both outputs and renders comprehensive results in an adaptive card.
+2. Copilot Studio orchestration logic decomposes the request into two prompts:
+   - `tech_prompt`
+   - `finance_prompt`
+3. Copilot invokes two flow actions:
+   - `POST_API_Respone_Tech`
+   - `POST_API_Respone_Finance`
+4. Each flow sends `POST` request to local retrieval API endpoint (through ngrok).
+5. Backend performs hybrid retrieval (vector + semantic) on Azure AI Search.
+6. Retrieved chunks are passed to Azure OpenAI for grounded answer generation.
+7. Guardrail validation checks claims against context.
+8. Backend response is returned to Copilot, parsed, and displayed in adaptive card sections for technology and finance.
 
 ## Repository structure
 
 - `ingestion/`: Ingestion API to create/clear index and ingest blob documents into Azure AI Search.
-- `retrieval/`: Retrieval API used by Copilot Studio for technology/finance responses.
+- `retrieval/`: Retrieval API used by Copilot Studio flows for technology/finance responses.
 - `demo-files/`: Sample documents for testing ingestion.
+- `copilot-export/StratifyAgent_1_0_0_1_managed.zip`: Exported Copilot Studio managed solution package.
+
+## Copilot package details (verified from export)
+
+- Solution unique name: `StratifyAgent`
+- Solution display name: `Stratify AI`
+- Solution version: `1.0.0.1`
+- Package type: `Managed`
+- Copilot name: `Stratify AI`
+- Main topic (display name): `Data Orchestrator`
+- Main topic schema name: `copilots_header_97e76.topic.AgentLeagueTopic`
+- Identity topic (display name): `Agent Identification`
+- Identity topic schema name: `copilots_header_97e76.topic.AgentIdentification`
+- AI Builder model used for prompt decomposition: `Orch_Two_domain_prompts`
+- Flow IDs used by topic:
+  - Finance flow: `4100834b-0c13-f111-8341-7ced8daf54b2`
+  - Tech flow: `95bffa7c-470f-f111-8341-7ced8daf0540`
+- Environment variables expected by both flows:
+  - `sai_var_ngrok_api_base_url` (example value from export was an ngrok URL)
+  - `sai_var_ngrok_api_method_name` (default `/get-response`)
 
 ## Prerequisites
 
@@ -56,12 +80,13 @@ Supported file types by current ingestion code:
 
 ### 1.2 Azure AI Search
 1. Create an Azure AI Search service.
-2. Note the endpoint and admin key.
+2. Note endpoint and admin key.
 3. Choose an index name (example: `stratify-index`).
 
 Important:
-- The ingestion API can create the index schema automatically using `POST /create-index`.
-- The schema includes `embedding` vector dimension `1536`, so your embedding deployment must output 1536-dimensional vectors.
+- Ingestion API can create the index schema via `POST /create-index`.
+- Schema uses vector `embedding` dimension `1536`.
+- Your embedding deployment must output 1536-dimensional vectors.
 
 ### 1.3 Azure OpenAI
 1. Create Azure OpenAI resource.
@@ -79,7 +104,7 @@ Important:
 Create `.env` files from examples.
 
 ### 2.1 Ingestion service env
-From `ingestion/example_env.txt`, create `ingestion/.env`:
+Create `ingestion/.env`:
 
 ```env
 AZURE_SEARCH_ENDPOINT=<your_search_endpoint>
@@ -106,7 +131,7 @@ SEARCH_BATCH_SIZE=200
 ```
 
 ### 2.2 Retrieval service env
-From `retrieval/example_env.txt`, create `retrieval/.env`:
+Create `retrieval/.env`:
 
 ```env
 AZURE_SEARCH_ENDPOINT=<your_search_endpoint>
@@ -121,8 +146,6 @@ AZURE_OPENAI_MODEL_DEPLOYMENT=<your_deployed_model_for_chat_completion>
 
 ## Step 3: Run ingestion service locally
 
-Open terminal in repo root:
-
 ```powershell
 cd ingestion
 python -m venv .venv
@@ -131,7 +154,7 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
-In another terminal (or Postman), call ingestion APIs.
+In another terminal or Postman:
 
 ### 3.1 Create search index
 
@@ -145,14 +168,14 @@ POST http://localhost:8001/create-index
 POST http://localhost:8001/ingest
 ```
 
-What ingestion does:
-- Reads files from Azure Blob container
-- Parses documents with Document Intelligence
+Ingestion behavior:
+- Reads documents from blob container
+- Parses with Document Intelligence
 - Chunks content
-- Summarizes table content into text rows
+- Summarizes tables into text rows
 - Generates embeddings
-- Removes older chunks for same `source_url`
-- Uploads new chunks to Azure AI Search index
+- Replaces prior chunks for same `source_url`
+- Uploads chunks to Azure AI Search
 
 Optional maintenance endpoint:
 
@@ -161,8 +184,6 @@ POST http://localhost:8001/clear-index
 ```
 
 ## Step 4: Run retrieval service locally
-
-Open a new terminal in repo root:
 
 ```powershell
 cd retrieval
@@ -202,11 +223,11 @@ Sample request:
 }
 ```
 
-`type` values:
+`type` values used by Copilot flows:
 - `technology`
 - `finance`
 
-Response shape:
+Response shape expected by Copilot topic parsing:
 
 ```json
 {
@@ -229,74 +250,90 @@ Response shape:
 
 ## Step 6: Expose retrieval API via ngrok
 
-Copilot Studio needs a public callback URL to access your local FastAPI retrieval service.
-
-Run:
+Copilot flows must call your local retrieval API through public HTTPS URL.
 
 ```powershell
 ngrok http 8000
 ```
 
-Copy the HTTPS forwarding URL (example: `https://xxxx-xx-xx-xx-xx.ngrok-free.app`).
+Copy HTTPS forwarding URL, for example:
+- `https://xxxx-xx-xx-xx-xx.ngrok-free.app`
 
-You will use this URL in Copilot Studio action/plugin configuration that calls `/get-response`.
+## Step 7: Import Copilot Studio solution
 
-## Step 7: Import and configure Copilot Studio agent
+### 7.1 Import package
+1. Open Power Platform / Copilot Studio environment.
+2. Import solution package from:
+   - `copilot-export/StratifyAgent_1_0_0_1_managed.zip`
+3. Complete import.
 
-The exported Copilot Studio agent package will be added to this repository.
+### 7.2 Update environment variable values after import
+Set these values in the target environment:
+1. `sai_var_ngrok_api_base_url` = your current ngrok HTTPS base URL
+   - Example: `https://xxxx-xx-xx-xx-xx.ngrok-free.app`
+2. `sai_var_ngrok_api_method_name` = `/get-response`
 
-After it is available:
-1. Import the solution/package into your Copilot Studio environment.
-2. Open the orchestrator agent.
-3. Update backend action/plugin endpoint to your current ngrok HTTPS URL.
-4. Ensure request mapping sends:
-   - `prompt` (user question)
-   - `type` (`technology` or `finance`)
-5. Publish the agent.
+These two variables are consumed by both flow actions.
+
+### 7.3 Validate flow request/response contracts
+Both flows send this payload to retrieval API:
+
+```json
+{
+  "prompt": "<text>",
+  "type": "technology|finance"
+}
+```
+
+The flow returns `apiresponse` as stringified HTTP body and the topic parses it into structured fields.
+
+### 7.4 Publish Copilot
+After updating variables and confirming flows, publish the Copilot agent.
 
 ## Step 8: End-to-end test flow
 
-1. Confirm ingestion is completed successfully.
-2. Confirm retrieval API responds in Postman.
-3. Confirm ngrok tunnel is active and HTTPS URL is configured in Copilot.
-4. Ask a project requirement question in Copilot chat.
-5. Verify adaptive card shows:
-   - technology analysis
-   - finance analysis
-   - grounded citations and guardrail details
+1. Run ingestion and complete index ingestion.
+2. Run retrieval API locally.
+3. Start ngrok for port `8000`.
+4. Update imported solution environment variables with current ngrok URL.
+5. Publish Copilot.
+6. Ask project requirement question in Copilot chat.
+7. Verify adaptive card contains:
+   - Technical Analysis section
+   - Financial Analysis section
+   - Guardrail verdict and confidence for both
+   - Source links from citations
 
 ## Troubleshooting
 
+### Copilot returns no response
+- Confirm retrieval API is running on `localhost:8000`.
+- Confirm ngrok session is active.
+- Confirm `sai_var_ngrok_api_base_url` points to active ngrok URL.
+- Confirm `sai_var_ngrok_api_method_name` is `/get-response`.
+- Check if flows `POST_API_Respone_Tech` and `POST_API_Respone_Finance` are turned on.
+
 ### Retrieval returns empty or "I do not know"
-- Verify documents are ingested into the expected Azure Search index.
+- Verify ingestion completed successfully.
 - Verify both services use same `AZURE_SEARCH_INDEX`.
-- Check if question terms exist in uploaded documents.
+- Check that relevant content exists in uploaded docs.
 
-### Index creation or ingestion fails
-- Confirm Azure Search endpoint/admin key are correct.
-- Confirm embedding deployment outputs 1536 dimensions.
-- Check Blob container name and connection string.
-- Verify Document Intelligence endpoint/key and supported file type.
+### Ingestion/index errors
+- Validate Azure Search endpoint/admin key.
+- Ensure embedding model is 1536-dimensional.
+- Validate Blob container and connection string.
+- Validate Document Intelligence endpoint/key.
 
-### Copilot cannot call local API
-- Check ngrok is running and URL is HTTPS.
-- Verify Copilot action endpoint points to `/get-response`.
-- Ensure retrieval API is running on local port `8000`.
-
-### JSON parsing errors from model
-- Ensure model deployment is correct and accessible.
-- Keep prompts grounded in indexed context.
-- Re-run request; transient model formatting issues can happen.
-
-## Notes for hackathon evaluators
-
-- Start with `demo-files/` for quick validation.
-- Ingestion and retrieval are decoupled services; both must be configured.
-- Copilot Studio package import is required for full orchestration UI experience.
+### JSON parsing issues in Copilot topic
+- Ensure retrieval API returns valid JSON object with exact keys:
+  - `answer`
+  - `citations`
+  - `guardrail`
+- Avoid non-JSON wrappers in backend response.
 
 ## Current status
 
 - FastAPI ingestion service: implemented
 - FastAPI retrieval + guardrail service: implemented
-- Copilot Studio export package: to be added in this repository
-- This README: setup guide for local end-to-end testing
+- Copilot Studio export package: included (`StratifyAgent_1_0_0_1_managed.zip`)
+- This README: end-to-end local setup and validation guide

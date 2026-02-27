@@ -55,15 +55,25 @@ def delete_keys_in_batches(keys: List[str]):
         print(f"Deleted {len(batch_keys)} chunks (total so far: {len(batch_keys)})....")
         
 def upload_chunks_in_batches(chunks: List[Dict[str, Any]]):
-    for i in range(0, len(chunks), int(SEARCH_BATCH_SIZE)):
-        batch = chunks[i:i + int(SEARCH_BATCH_SIZE)]
+    total_chunks = len(chunks)
+    if total_chunks == 0:
+        return "Uploaded 0 chunks (total 0/0)"
+
+    uploaded = 0
+    batch_size = int(SEARCH_BATCH_SIZE)
+
+    for i in range(0, total_chunks, batch_size):
+        batch = chunks[i:i + batch_size]
         result = search_client.upload_documents(documents=batch)
 
         failed = [r for r in result if not r.succeeded]
         if failed:
             raise RuntimeError(f"Upload failed for {len(failed)} chunks. First error: {failed[0].error_message}")
 
-        return f"Uploaded {len(batch)} chunks (total {min(i+int(SEARCH_BATCH_SIZE), len(chunks))}/{len(chunks)})"
+        uploaded += len(batch)
+        print(f"Uploaded {len(batch)} chunks (total {uploaded}/{total_chunks})....")
+
+    return f"Uploaded {uploaded} chunks (total {uploaded}/{total_chunks})"
     
 def delete_all_chunks_from_index(page_size: int = 1000):
     results = search_client.search(
