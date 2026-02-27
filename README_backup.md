@@ -4,6 +4,18 @@ Stratify AI is a project-requirement analysis assistant. It helps teams strategi
 
 Given a user query, the Copilot Studio orchestrator decomposes it into technology and finance prompts, calls backend RAG APIs, runs a reasoning-based guardrail validation to verify grounding, and presents a consolidated recommendation with citations. This repository includes the FastAPI ingestion/retrieval services and the exported Copilot solution package so the full workflow can be run locally end-to-end.
 
+## Tech stack
+
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Framework-009688?logo=fastapi&logoColor=white)
+![Azure AI Search](https://img.shields.io/badge/Azure%20AI%20Search-RAG-0078D4?logo=microsoftazure&logoColor=white)
+![Azure OpenAI](https://img.shields.io/badge/Azure%20OpenAI-LLM-0078D4?logo=openai&logoColor=white)
+![Azure Document Intelligence](https://img.shields.io/badge/Azure%20Document%20Intelligence-OCR%20%2B%20Layout-0078D4?logo=microsoftazure&logoColor=white)
+![Azure Blob Storage](https://img.shields.io/badge/Azure%20Blob%20Storage-Docs-0078D4?logo=microsoftazure&logoColor=white)
+![Copilot Studio](https://img.shields.io/badge/Copilot%20Studio-Orchestration-742774?logo=microsoft&logoColor=white)
+![Power Automate](https://img.shields.io/badge/Power%20Automate-Flows-0066FF?logo=powerautomate&logoColor=white)
+![ngrok](https://img.shields.io/badge/ngrok-Local%20Tunnel-1F1E37?logo=ngrok&logoColor=white)
+
 ## Solution overview
 
 The solution provides project requirement analysis through two perspectives:
