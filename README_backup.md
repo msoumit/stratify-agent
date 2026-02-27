@@ -374,6 +374,15 @@ If you ingest the sample documents from `demo-files/`, use these prompts to vali
   - `guardrail`
 - Avoid non-JSON wrappers in backend response.
 
+## Acknowledgements
 
+This project was built by:
+- Soumit Mukherjee
+- Sourav Paul
+- Soumyadeep Mukherjee
 
+We acknowledge the support of Microsoft Copilot Studio, Power Automate, and Azure AI services used in this solution.
 
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
