@@ -91,7 +91,7 @@ Create resources in one Azure subscription/resource group:
 ## Step 0: Clone the repository
 
 ```powershell
-git clone <your-repo-url>
+git clone https://github.com/msoumit/stratify-agent.git
 cd stratify-agent
 ```
 
