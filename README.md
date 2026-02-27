@@ -27,7 +27,7 @@ To be written later
 
 # Agent process flow architecture
 
-![Tech Diagram](STRATIFY-AGENT/Images/Tech Diagram.png)
+![Tech Diagram](H:\Work\StratifyAgent\stratify-agent\Images)
 
 ![Memaid Diagram](stratify-agent\Images\Mermaid.png)
 
