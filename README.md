@@ -26,6 +26,11 @@ Some sample files to be uploaded in Azure Blob Container which will be ingested 
 To be written later
 
 # Agent process flow architecture
+
+![Tech Diagram](https://github.com/msoumit/stratify-agent/blob/main/Images/Mermaid.png)
+
+![Memaid Diagram](https://github.com/msoumit/stratify-agent/blob/main/Images/Tech%20Diagram.png)
+
 End user asks question about project requirement in Copilot Studio
 Copilot Studio Orchestrator agent splits the query into two prompts - technology oriented and finance oriented
 Orchestrator agent calls back end Fast API endpoint for both technology and finance
