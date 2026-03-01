@@ -15,7 +15,6 @@ di_client = DocumentIntelligenceClient(
 )
 
 def analyze_layout(file_bytes: bytes, content_type: str):
-    """Run Azure DI prebuilt-layout and return result.as_dict()."""
     poller = di_client.begin_analyze_document(
         model_id=DI_MODEL,
         body=file_bytes,

@@ -41,7 +41,6 @@ def embed_texts_batch(texts: List[str]) -> List[List[float]]:
     for start in range(0, len(texts), int(EMBEDDING_BATCH_SIZE)):
         batch = texts[start : start + int(EMBEDDING_BATCH_SIZE)]
 
-        # One API call for many inputs (cheaper + faster than per-chunk calls)
         resp = oai_client.embeddings.create(
             model=OAI_EMBED_DEPLOYMENT,
             input=batch,

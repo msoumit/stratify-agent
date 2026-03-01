@@ -41,7 +41,6 @@ def get_unique_source_urls(chunks: List[Dict[str, Any]]) -> List[str]:
     return out
 
 def build_source_url_filter(source_urls: List[str]) -> str:
-    # source_url eq '...' or source_url eq '...'
     return " or ".join([f"source_url eq '{escape_odata_string(su)}'" for su in source_urls])
 
 
